@@ -1,6 +1,8 @@
 import config
 import discord
 import requests
+import matplotlib.pyplot as plt
+from io import BytesIO
 
 bot = discord.Bot()
 
@@ -45,7 +47,17 @@ async def chart(
         if 'Error Message' in response.json():
             await ctx.respond('Invalid inputs in chart command. Please enter a valid symbol or function.')
         else:
-            print(response.json())
-            await ctx.respond('Data fetched')
+            
+            # Create buffer
+            buf = BytesIO()
+
+            # Generate chart
+            plt.plot([1,2,3],[4,5,6])
+            plt.savefig(buf, format='png')
+            buf.seek(0)
+            plt.close()
+
+            # Send to discord channel
+            await ctx.send(file=discord.File(buf, f"{symbol.upper()}_{function_input.upper()}_chart.png"))
 
 bot.run(DISCORD_TOKEN)
