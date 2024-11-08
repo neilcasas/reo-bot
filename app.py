@@ -1,6 +1,7 @@
 import config
 import discord
 import requests
+
 bot = discord.Bot()
 
 ALPHA_VANTAGE_API_KEY = config.ALPHA_VANTAGE_API_KEY
@@ -10,17 +11,17 @@ DISCORD_TOKEN = config.DISCORD_TOKEN
 async def on_ready():
     print(f'We have logged in as {bot.user}')
 
-@bot.slash_command(guild_ids=[config.GUILD_ID]) 
+@bot.slash_command() 
 async def hello(ctx):
     await ctx.respond('Hello! I am a simple bot!')
 
-@bot.slash_command(guild_ids=[config.GUILD_ID])
+@bot.slash_command()
 async def insult(ctx, user: discord.User):
     await ctx.respond(f'Uy {user.mention}, ambaho ng utot mo!')
 
 
 # Command for generating chart data
-@bot.slash_command(guild_ids=[config.GUILD_ID])
+@bot.slash_command(description='Generate chart data for a given symbol and function')
 async def chart(ctx, symbol: str, function_input: str):
     # Get financial data
     url = f'https://www.alphavantage.co/query'
@@ -36,10 +37,13 @@ async def chart(ctx, symbol: str, function_input: str):
 
     # Check if response is successful
     if response.status_code != 200:
-        await ctx.respond('Error fetching data')
+        await ctx.respond('Error fetching chart data. Please try again.')
         return
     else:
-        print(response.json())
-        await ctx.respond('Data fetched')
+        if 'Error Message' in response.json():
+            await ctx.respond('Invalid inputs in chart command. Please enter a valid symbol or function.')
+        else:
+            print(response.json())
+            await ctx.respond('Data fetched')
 
 bot.run(DISCORD_TOKEN)
