@@ -19,13 +19,15 @@ async def hello(ctx):
 async def insult(ctx, user: discord.User):
     await ctx.respond(f'Uy {user.mention}, ambaho ng utot mo!')
 
-
 # Command for generating chart data
-@bot.slash_command(description='Generate chart data for a given symbol and function')
-async def chart(ctx, symbol: str, function_input: str):
+@bot.slash_command(name='chart', description='Generate chart data for a given symbol and function')
+async def chart(
+    ctx,
+    symbol: str = discord.Option(description="The stock symbol to get data for, e.g., 'AAPL' for Apple"),
+    function_input: str = discord.Option(description="The time series function, e.g., 'INTRADAY', 'DAILY', 'WEEKLY', 'MONTHLY'")
+):
     # Get financial data
     url = f'https://www.alphavantage.co/query'
-
     params = {
        'function': f'TIME_SERIES_{function_input.upper()}',
         'symbol': symbol.upper(),
