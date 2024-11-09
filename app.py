@@ -58,6 +58,7 @@ async def chart(
             plt.close()
 
             # Send to discord channel
+            print(response.json())
             await ctx.send(file=discord.File(buf, f"{symbol.upper()}_{function_input.upper()}_chart.png"))
 
 bot.run(DISCORD_TOKEN)
