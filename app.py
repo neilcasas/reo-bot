@@ -1,4 +1,6 @@
-import config
+from dotenv import load_dotenv
+import os
+
 import discord
 import requests
 import matplotlib.pyplot as plt
@@ -6,8 +8,10 @@ from io import BytesIO
 
 bot = discord.Bot()
 
-ALPHA_VANTAGE_API_KEY = config.ALPHA_VANTAGE_API_KEY
-DISCORD_TOKEN = config.DISCORD_TOKEN
+# Load .env
+load_dotenv()
+ALPHA_VANTAGE_API_KEY = os.getenv(DISCORD_TOKEN)
+DISCORD_TOKEN = os.getenv(ALPHA_VANTAGE_API_KEY)
 
 @bot.event
 async def on_ready():
