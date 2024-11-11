@@ -10,8 +10,8 @@ bot = discord.Bot()
 
 # Load .env
 load_dotenv()
-ALPHA_VANTAGE_API_KEY = os.getenv(ALPHA_VANTAGE_API_KEY)
-DISCORD_TOKEN = os.getenv(DISCORD_TOKEN)
+ALPHA_VANTAGE_API_KEY = os.getenv("ALPHA_VANTAGE_API_KEY")
+DISCORD_TOKEN = os.getenv("DISCORD_TOKEN")
 
 @bot.event
 async def on_ready():
