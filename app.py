@@ -6,12 +6,13 @@ import requests
 import matplotlib.pyplot as plt
 from io import BytesIO
 
-bot = discord.Bot()
 
 # Load .env
 load_dotenv()
 ALPHA_VANTAGE_API_KEY = os.getenv("ALPHA_VANTAGE_API_KEY")
 DISCORD_TOKEN = os.getenv("DISCORD_TOKEN")
+
+bot = discord.Bot()
 
 @bot.event
 async def on_ready():
