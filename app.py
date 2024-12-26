@@ -410,11 +410,11 @@ async def info(ctx, symbol: str=discord.Option(description="The stock symbol to 
             # Create an embed to display information
             embed = discord.Embed(title=f'{company_name}', color=discord.Colour.blurple())
             embed.add_field(name='Sector', value=sector.capitalize(), inline=False)
-            embed.add_field(name='Market Cap', value=f"${int(market_cap):,}", inline=False)
+            embed.add_field(name='Market Cap', value=f"${int(market_cap):,}" if market_cap != "N/A" else market_cap , inline=False)
             embed.add_field(name='P/E Ratio', value=pe_ratio, inline=False)
             embed.add_field(name='EPS', value=eps, inline=False)
             embed.add_field(name='Dividend Per Share', value=f"${dividend_per_share}", inline=False)
-            embed.add_field(name='Dividend Yield', value='{:.2%}'.format(float(dividend_yield)), inline=False)
+            embed.add_field(name='Dividend Yield', value='{:.2%}'.format(float(dividend_yield)) if dividend_yield != "N/A" else dividend_yield, inline=False)
             embed.add_field(name='52 Week High', value=f"${week_52_high}", inline=False)
             embed.add_field(name='52 Week Low', value=f"${week_52_low}", inline=False)
             embed.add_field(name='Website', value=f'[Official Website for {company_name}]({website})', inline=False)
