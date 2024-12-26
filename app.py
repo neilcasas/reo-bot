@@ -3,6 +3,7 @@ import os
 import json
 from datetime import datetime, timedelta
 import discord
+from discord.ext import commands
 import requests
 import matplotlib.pyplot as plt
 from io import BytesIO
@@ -22,7 +23,7 @@ async def on_ready():
 
 @bot.slash_command(name="help", description="Learn more about reo-bot and its commands") 
 async def help(ctx):
-    embed = discord.Embed(title="Help", description="`reo-bot` is a Discord bot that provides real-time financial charts and ticker data for stocks and assets.", color=discord.Colour.blurple())
+    embed = discord.Embed(title="I'm `reo-bot`, nice to meet you! 👋", description="I can provide real-time financial charts and ticker data for stocks and assets.", color=discord.Colour.blurple())
     embed.add_field(name="`/help`", value="View all commands", inline=False)
     embed.add_field(name="`/crypto_price`", value="Get the current price of a cryptocurrency.", inline=False)
     embed.add_field(name="`/stock_price`", value="Get the current price of a stock.", inline=False)
@@ -30,6 +31,9 @@ async def help(ctx):
     embed.add_field(name="`/week_chart`", value="Generate this week's chart for a given symbol.", inline=False)
     embed.add_field(name="`/month_chart`", value="Generate the latest month chart for a given symbol.", inline=False)
     embed.add_field(name="`/year_chart`", value="Generate the latest year chart for a given symbol.", inline=False)
+    embed.set_author(name="reo-bot", icon_url=bot.user.display_avatar.url)
+    embed.set_thumbnail(url=bot.user.display_avatar.url)
+    embed.set_footer(text="Fun fact: I'm named after Reo Mikage from the anime Blue Lock, hence the chameleon icon!")
     await ctx.respond(embed=embed)
 
 # Command for getting the current price of a cryptocurrency
@@ -67,6 +71,7 @@ async def crypto_price (
             embed = discord.Embed(title=f'Current Price of {symbol.upper()}', description=f'The current price of {symbol.upper()} is ${"{:.2f}".format(round(float(price),2))}.', color=discord.Colour.blurple())
             embed.add_field(name='Learn More', value=f'[View more information about {symbol.upper()}](https://www.tradingview.com/symbols/{symbol.upper()}USD)', inline=False)
             embed.set_footer(text='Data provided by Alpha Vantage')
+            embed.set_author(name="reo-bot", icon_url=bot.user.display_avatar.url)
 
             await ctx.respond(embed=embed)
 
@@ -103,6 +108,7 @@ async def stock_price (
 
             embed = discord.Embed(title=f'Current Price of {symbol.upper()}', description=f'The current price of {symbol.upper()} is ${"{:.2f}".format(round(float(price),2))}.', color=discord.Colour.blurple())
             embed.add_field(name='Learn More', value=f'[View more information about {symbol.upper()}](https://www.tradingview.com/symbols/{symbol.upper()})', inline=False)
+            embed.set_author(name="reo-bot", icon_url=bot.user.display_avatar.url)
             embed.set_footer(text='Data provided by Alpha Vantage')
 
             await ctx.respond(embed=embed)
@@ -154,9 +160,9 @@ async def day_chart (
             buf.seek(0)
 
             # Send to discord channel
-            print(time_series)
-            embed = discord.Embed(title=f'Latest Day Chart for {symbol.upper()}', description=f'Here is the latest day chart for {symbol.upper()}:', color=discord.Colour.blurple())
+            embed = discord.Embed(title=f'Latest Day Chart for {symbol.upper()}', description=f'Here is the latest day chart for {symbol.upper()}.', color=discord.Colour.blurple())
             embed.add_field(name='Learn More', value=f'[View more information about {symbol.upper()}](https://www.tradingview.com/symbols/{symbol.upper()})', inline=False)
+            embed.set_author(name="reo-bot", icon_url=bot.user.display_avatar.url)
             embed.set_image(url=f"attachment://{symbol.upper()}_chart.png")
             embed.set_footer(text='Data provided by Alpha Vantage')
             await ctx.send(embed=embed, file=discord.File(buf, f"{symbol.upper()}_chart.png"))
@@ -221,9 +227,9 @@ async def week_chart (
             buf.seek(0)
 
             # Send to discord channel
-            print(week_data)
-            embed = discord.Embed(title=f'Latest Week Chart for {symbol.upper()}', description=f'Here is the latest week chart for {symbol.upper()}:', color=discord.Colour.blurple())
+            embed = discord.Embed(title=f'Latest Week Chart for {symbol.upper()}', description=f'Here is the latest week chart for {symbol.upper()}.', color=discord.Colour.blurple())
             embed.add_field(name='Learn More', value=f'[View more information about {symbol.upper()}](https://www.tradingview.com/symbols/{symbol.upper()})', inline=False)
+            embed.set_author(name="reo-bot", icon_url=bot.user.display_avatar.url)
             embed.set_image(url=f"attachment://{symbol.upper()}_chart.png")
             embed.set_footer(text='Data provided by Alpha Vantage')
             await ctx.send(embed=embed, file=discord.File(buf, f"{symbol.upper()}_chart.png"))
@@ -288,9 +294,9 @@ async def month_chart (
             buf.seek(0)
 
             # Send to discord channel
-            print(month_data)
-            embed = discord.Embed(title=f'Latest Month Chart for {symbol.upper()}', description=f'Here is the latest month chart for {symbol.upper()}:', color=discord.Colour.blurple())
+            embed = discord.Embed(title=f'Latest Month Chart for {symbol.upper()}', description=f'Here is the latest month chart for {symbol.upper()}.', color=discord.Colour.blurple())
             embed.add_field(name='Learn More', value=f'[View more information about {symbol.upper()}](https://www.tradingview.com/symbols/{symbol.upper()})', inline=False)
+            embed.set_author(name="reo-bot", icon_url=bot.user.display_avatar.url)
             embed.set_image(url=f"attachment://{symbol.upper()}_chart.png")
             embed.set_footer(text='Data provided by Alpha Vantage')
             await ctx.send(embed=embed, file=discord.File(buf, f"{symbol.upper()}_chart.png"))
@@ -356,10 +362,10 @@ async def year_chart (
             buf.seek(0)
 
             # Send to discord channel
-            print(year_data)
-            embed = discord.Embed(title=f'Latest Year Chart for {symbol.upper()}', description=f'Here is the latest year chart for {symbol.upper()}:', color=discord.Colour.blurple())
+            embed = discord.Embed(title=f'Latest Year Chart for {symbol.upper()}', description=f'Here is the latest year chart for {symbol.upper()}.', color=discord.Colour.blurple())
             embed.add_field(name='Learn More', value=f'[View more information about {symbol.upper()}](https://www.tradingview.com/symbols/{symbol.upper()})', inline=False)
             embed.set_image(url=f"attachment://{symbol.upper()}_chart.png")
+            embed.set_author(name="reo-bot", icon_url=bot.user.display_avatar.url)
             embed.set_footer(text='Data provided by Alpha Vantage')
             await ctx.send(embed=embed, file=discord.File(buf, f"{symbol.upper()}_chart.png"))
 
