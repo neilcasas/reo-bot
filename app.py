@@ -92,7 +92,7 @@ async def stock_price (
             await ctx.respond(f'The current price of {symbol.upper()} is ${"{:.2f}".format(round(float(price),2))}.')
 
 # Command for generating daily chart data
-@bot.slash_command(name='day_chart', description='Generate an intraday chart for a given symbol and function')
+@bot.slash_command(name='day_chart', description='Generate the latest intraday chart for a given symbol and function')
 async def day_chart (
     ctx,
     symbol: str = discord.Option(description="The stock symbol to get data for, e.g. 'AAPL' for Apple")
@@ -143,7 +143,7 @@ async def day_chart (
             await ctx.send(file=discord.File(buf, f"{symbol.upper()}_chart.png"))
 
 # Command for generating weekly chart data
-@bot.slash_command(name='week_chart', description='Generate this week\'s chart for a given symbol and function')
+@bot.slash_command(name='week_chart', description='Generate the latest week chart for a given symbol and function')
 async def week_chart (
     ctx,
     symbol: str = discord.Option(description="The stock symbol to get data for, e.g. 'AAPL' for Apple")
