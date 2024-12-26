@@ -1,5 +1,5 @@
 # reo-bot
-reo-bot is a Discord bot that assists in your financial ventures by providing real-time financial charts and ticker data for stocks and assets.<br>
+reo-bot is a Discord bot that assists in your financial ventures by providing real-time financial charts and ticker data for stocks and assets.<br><br>
 [Register this bot to your server](https://discord.com/oauth2/authorize?client_id=1302684404153454644)
 ## Features
 
