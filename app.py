@@ -24,9 +24,73 @@ async def on_ready():
 async def hello(ctx):
     await ctx.respond('Hello! I am a simple bot!')
 
-@bot.slash_command()
-async def insult(ctx, user: discord.User):
-    await ctx.respond(f'Uy {user.mention}, ambaho ng utot mo!')
+# Command for getting the current price of a cryptocurrency
+@bot.slash_command(name='crypto_price', description='Get the current price of a cryptocurrency')
+async def crypto_price (
+    ctx,
+    symbol: str = discord.Option(description="The cryptocurrency symbol to get data for, e.g. 'BTC' for Bitcoin")
+):
+
+    # Get financial data
+    url = f'https://www.alphavantage.co/query'
+    params = {
+        'function':'CURRENCY_EXCHANGE_RATE',
+        'from_currency': symbol.upper(),
+        'to_currency': 'USD',
+        'apikey': ALPHA_VANTAGE_API_KEY
+    }
+
+    response = requests.get(url, params=params)
+
+    # Check if response is successful
+    if response.status_code != 200:
+        await ctx.respond('Error fetching cryptocurrency price. Please try again.')
+        return
+    else:
+        if 'Error Message' in response.json():
+            await ctx.respond('Invalid inputs in cryptocurrency price command. Please enter a valid symbol.')
+        else:
+            # Get cryptocurrency price
+            price = response.json().get('Realtime Currency Exchange Rate', {}).get('5. Exchange Rate')
+            if not price:
+                await ctx.respond('No data available for the given symbol.')
+                return
+
+            await ctx.respond(f'The current price of {symbol.upper()} is ${"{:.2f}".format(round(float(price),2))}.')
+
+# Command for getting the current price of a stock
+@bot.slash_command(name='stock_price', description='Get the current price of a stock')
+async def stock_price (
+    ctx,
+    symbol: str = discord.Option(description="The stock symbol to get data for, e.g. 'AAPL' for Apple")
+):
+
+    # Get financial data
+    url = f'https://www.alphavantage.co/query'
+    params = {
+        'function':'GLOBAL_QUOTE',
+        'symbol': symbol.upper(),
+        'apikey': ALPHA_VANTAGE_API_KEY
+    }
+
+    response = requests.get(url, params=params)
+
+    # Check if response is successful
+    if response.status_code != 200:
+        await ctx.respond('Error fetching stock price. Please try again.')
+        return
+    else:
+        if 'Error Message' in response.json():
+            await ctx.respond('Invalid inputs in stock price command. Please enter a valid symbol.')
+        else:
+            # Get stock price
+            price = response.json().get('Global Quote', {}).get('05. price')
+            if not price:
+                await ctx.respond('No data available for the given symbol.')
+                return
+
+            await ctx.respond(f'The current price of {symbol.upper()} is ${"{:.2f}".format(round(float(price),2))}.')
+
 
 # Command for generating weekly chart data
 @bot.slash_command(name='weekly_chart', description='Generate this week\'s chart for a given symbol and function')
