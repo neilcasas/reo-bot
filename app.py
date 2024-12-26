@@ -30,7 +30,7 @@ async def crypto_price (
     ctx,
     symbol: str = discord.Option(description="The cryptocurrency symbol to get data for, e.g. 'BTC' for Bitcoin")
 ):
-
+    await ctx.respond(f'Fetching the current price of {symbol.upper()}...')
     # Get financial data
     url = f'https://www.alphavantage.co/query'
     params = {
@@ -64,7 +64,7 @@ async def stock_price (
     ctx,
     symbol: str = discord.Option(description="The stock symbol to get data for, e.g. 'AAPL' for Apple")
 ):
-
+    await ctx.respond(f'Fetching the current price of {symbol.upper()}...')
     # Get financial data
     url = f'https://www.alphavantage.co/query'
     params = {
@@ -98,6 +98,7 @@ async def day_chart (
     symbol: str = discord.Option(description="The stock symbol to get data for, e.g. 'AAPL' for Apple")
 ):
 
+    await ctx.respond(f'Fetching the latest day chart for {symbol.upper()}...')
     # Get financial data
     url = f'https://www.alphavantage.co/query'
     params = {
@@ -148,6 +149,7 @@ async def week_chart (
     symbol: str = discord.Option(description="The stock symbol to get data for, e.g. 'AAPL' for Apple")
 ):
 
+    await ctx.respond(f'Fetching the latest week chart for {symbol.upper()}...')
     # Get financial data
     url = f'https://www.alphavantage.co/query'
     params = {
