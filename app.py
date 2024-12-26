@@ -25,6 +25,7 @@ async def on_ready():
 async def help(ctx):
     embed = discord.Embed(title="I'm `reo-bot`, nice to meet you! 👋", description="I can provide real-time financial charts and ticker data for stocks and assets.", color=discord.Colour.blurple())
     embed.add_field(name="`/help`", value="View all commands", inline=False)
+    embed.add_field(name="`/info`", value="Get information about a stock.", inline=False)
     embed.add_field(name="`/crypto_price`", value="Get the current price of a cryptocurrency.", inline=False)
     embed.add_field(name="`/stock_price`", value="Get the current price of a stock.", inline=False)
     embed.add_field(name="`/day_chart`", value="Generate the latest intraday chart for a given symbol.", inline=False)
@@ -368,5 +369,57 @@ async def year_chart (
             embed.set_author(name="reo-bot", icon_url=bot.user.display_avatar.url)
             embed.set_footer(text='Data provided by Alpha Vantage')
             await ctx.send(embed=embed, file=discord.File(buf, f"{symbol.upper()}_chart.png"))
+
+@bot.slash_command(name='info', description='Get information about a stock.')
+async def info(ctx, symbol: str=discord.Option(description="The stock symbol to get information for, e.g. 'AAPL' for Apple")):
+
+    await ctx.respond(f'Fetching information for {symbol.upper()}...')
+
+    # Fetch from alpha vantage API
+    url = f'https://www.alphavantage.co/query'
+    params = {
+        'function':'OVERVIEW',
+        'symbol': symbol.upper(),
+        'apikey': ALPHA_VANTAGE_API_KEY,
+        'outputsize': 'compact'
+    }
+
+    response = requests.get(url, params=params)
+
+    # Check if response is successful
+    if response.status_code != 200:
+        await ctx.respond('Error fetching info data. Please try again.')
+        return
+    else:
+        data = response.json()
+        if 'Error Message' in response.json():
+            await ctx.respond('Invalid inputs in info command. Please enter a valid symbol.')
+        else:
+            # Access data from the dictionary
+            company_name = data.get('Name', 'N/A')
+            sector = data.get('Sector', 'N/A')
+            market_cap = data.get('MarketCapitalization', 'N/A')
+            pe_ratio = data.get('PERatio', 'N/A')
+            eps = data.get('EPS', 'N/A')
+            dividend_per_share = data.get('DividendPerShare', 'N/A')
+            dividend_yield = data.get('DividendYield', 'N/A')
+            week_52_high = data.get('52WeekHigh', 'N/A')
+            week_52_low = data.get('52WeekLow', 'N/A')
+            website = data.get('OfficialSite', 'N/A') 
+
+            # Create an embed to display information
+            embed = discord.Embed(title=f'{company_name}', color=discord.Colour.blurple())
+            embed.add_field(name='Sector', value=sector.capitalize(), inline=False)
+            embed.add_field(name='Market Cap', value=f"${int(market_cap):,}", inline=False)
+            embed.add_field(name='P/E Ratio', value=pe_ratio, inline=False)
+            embed.add_field(name='EPS', value=eps, inline=False)
+            embed.add_field(name='Dividend Per Share', value=f"${dividend_per_share}", inline=False)
+            embed.add_field(name='Dividend Yield', value='{:.2%}'.format(float(dividend_yield)), inline=False)
+            embed.add_field(name='52 Week High', value=f"${week_52_high}", inline=False)
+            embed.add_field(name='52 Week Low', value=f"${week_52_low}", inline=False)
+            embed.add_field(name='Website', value=f'[Official Website for {company_name}]({website})', inline=False)
+            embed.set_author(name="reo-bot", icon_url=bot.user.display_avatar.url)
+            embed.set_footer(text='Data provided by Alpha Vantage')
+            await ctx.respond(embed=embed)
 
 bot.run(DISCORD_TOKEN)
