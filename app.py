@@ -142,6 +142,7 @@ async def day_chart (
             await ctx.send(f'Here is the latest day chart for {symbol.upper()}:')
             await ctx.send(file=discord.File(buf, f"{symbol.upper()}_chart.png"))
 
+
 # Command for generating weekly chart data
 @bot.slash_command(name='week_chart', description='Generate the latest week chart for a given symbol and function')
 async def week_chart (
@@ -206,3 +207,130 @@ async def week_chart (
             await ctx.send(file=discord.File(buf, f"{symbol.upper()}_chart.png"))
 
 bot.run(DISCORD_TOKEN)
+
+# Command for generating month chart data
+@bot.slash_command(name='month_chart', description='Generate the latest month chart for a given symbol and function')
+async def month_chart (
+    ctx,
+    symbol: str = discord.Option(description="The stock symbol to get data for, e.g. 'AAPL' for Apple")
+):
+    await ctx.respond(f'Fetching the latest month chart for {symbol.upper()}...')
+
+    # Get financial data
+    url = f'https://www.alphavantage.co/query'
+    params = {
+        'function':'TIME_SERIES_DAILY',
+        'symbol': symbol.upper(),
+        'apikey': ALPHA_VANTAGE_API_KEY,
+        'outputsize': 'compact'
+    }
+
+    response = requests.get(url, params=params)
+
+    # Check if response is successful
+    if response.status_code != 200:
+        await ctx.respond('Error fetching chart data. Please try again.')
+        return
+    else:
+        if 'Error Message' in response.json():
+            await ctx.respond('Invalid inputs in chart command. Please enter a valid symbol or function.')
+        else:
+            # Get chart for this month
+            time_series = response.json().get('Time Series (Daily)', {})
+            if not time_series:
+                await ctx.respond('No data available for the given symbol.')
+                return
+
+            # Filter data for the past 30 days
+            end_date = datetime.now()
+            start_date = end_date - timedelta(days=30)
+            month_data = {date: data for date, data in time_series.items() if start_date <= datetime.strptime(date, '%Y-%m-%d') <= end_date}
+
+            if not month_data:
+                await ctx.respond('No data available for the past 30 days.')
+                return
+
+            # Sort the data in ascending order
+            month_data = dict(sorted(month_data.items()))
+
+            # Prepare data for candlestick chart
+            df = pd.DataFrame.from_dict(month_data, orient='index')
+            df.index = pd.to_datetime(df.index)
+            df.columns = ['open', 'high', 'low', 'close', 'volume']
+            df = df.astype(float)
+
+            # Create buffer
+            buf = BytesIO()
+            
+            # Generate candlestick chart
+            mpf.plot(df, type='candle', style='charles', title=f'{symbol.upper()} Stock Price', ylabel='Price ($)', savefig=dict(fname=buf, format='png'))
+            buf.seek(0)
+
+            # Send to discord channel
+            print(month_data)
+            await ctx.send(f'Here is the latest month chart for {symbol.upper()}:')
+
+# Command for generating year chart data
+@bot.slash_command(name='year_chart', description='Generate the latest year chart for a given symbol and function')
+
+async def year_chart (
+    ctx,
+    symbol: str = discord.Option(description="The stock symbol to get data for, e.g. 'AAPL' for Apple")
+):
+
+    await ctx.respond(f'Fetching the latest year chart for {symbol.upper()}...')
+
+    # Get financial data
+    url = f'https://www.alphavantage.co/query'
+    params = {
+        'function':'TIME_SERIES_DAILY',
+        'symbol': symbol.upper(),
+        'apikey': ALPHA_VANTAGE_API_KEY,
+        'outputsize': 'compact'
+    }
+
+    response = requests.get(url, params=params)
+
+    # Check if response is successful
+    if response.status_code != 200:
+        await ctx.respond('Error fetching chart data. Please try again.')
+        return
+    else:
+        if 'Error Message' in response.json():
+            await ctx.respond('Invalid inputs in chart command. Please enter a valid symbol or function.')
+        else:
+            # Get chart for this year
+            time_series = response.json().get('Time Series (Daily)', {})
+            if not time_series:
+                await ctx.respond('No data available for the given symbol.')
+                return
+
+            # Filter data for the past 365 days
+            end_date = datetime.now()
+            start_date = end_date - timedelta(days=365)
+            year_data = {date: data for date, data in time_series.items() if start_date <= datetime.strptime(date, '%Y-%m-%d') <= end_date}
+
+            if not year_data:
+                await ctx.respond('No data available for the past 365 days.')
+                return
+
+            # Sort the data in ascending order
+            year_data = dict(sorted(year_data.items()))
+
+            # Prepare data for candlestick chart
+            df = pd.DataFrame.from_dict(year_data, orient='index')
+            df.index = pd.to_datetime(df.index)
+            df.columns = ['open', 'high', 'low', 'close', 'volume']
+            df = df.astype(float)
+
+            # Create buffer
+            buf = BytesIO()
+
+            # Generate candlestick chart
+            mpf.plot(df, type='candle', style='charles', title=f'{symbol.upper()} Stock Price', ylabel='Price ($)', savefig=dict(fname=buf, format='png'))
+            buf.seek(0)
+
+            # Send to discord channel
+            print(year_data)
+            await ctx.send(f'Here is the latest year chart for {symbol.upper()}:')
+            await ctx.send(file=discord.File(buf, f"{symbol.upper()}_chart.png"))
