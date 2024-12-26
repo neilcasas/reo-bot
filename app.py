@@ -91,10 +91,59 @@ async def stock_price (
 
             await ctx.respond(f'The current price of {symbol.upper()} is ${"{:.2f}".format(round(float(price),2))}.')
 
+# Command for generating daily chart data
+@bot.slash_command(name='day_chart', description='Generate an intraday chart for a given symbol and function')
+async def day_chart (
+    ctx,
+    symbol: str = discord.Option(description="The stock symbol to get data for, e.g. 'AAPL' for Apple")
+):
+
+    # Get financial data
+    url = f'https://www.alphavantage.co/query'
+    params = {
+        'function':'TIME_SERIES_INTRADAY',
+        'symbol': symbol.upper(),
+        'interval': '5min',
+        'apikey': ALPHA_VANTAGE_API_KEY
+    }
+
+    response = requests.get(url, params=params)
+
+    # Check if response is successful
+    if response.status_code != 200:
+        await ctx.respond('Error fetching chart data. Please try again.')
+        return
+    else:
+        if 'Error Message' in response.json():
+            await ctx.respond('Invalid inputs in chart command. Please enter a valid symbol or function.')
+        else:
+            # Get chart for today
+            time_series = response.json().get('Time Series (5min)', {})
+            if not time_series:
+                await ctx.respond('No data available for the given symbol.')
+                return
+
+            # Prepare candlestick chart
+            df = pd.DataFrame.from_dict(time_series, orient='index')
+            df.index = pd.to_datetime(df.index)
+            df.columns = ['open', 'high', 'low', 'close', 'volume']
+            df = df.astype(float)
+
+            # Create buffer
+            buf = BytesIO()
+
+            # Generate candlestick chart
+            mpf.plot(df, type='candle', style='charles', title=f'{symbol.upper()} Stock Price', ylabel='Price ($)', savefig=dict(fname=buf, format='png'))
+            buf.seek(0)
+
+            # Send to discord channel
+            print(time_series)
+            await ctx.send(f'Here is the latest day chart for {symbol.upper()}:')
+            await ctx.send(file=discord.File(buf, f"{symbol.upper()}_chart.png"))
 
 # Command for generating weekly chart data
-@bot.slash_command(name='weekly_chart', description='Generate this week\'s chart for a given symbol and function')
-async def weekly_chart (
+@bot.slash_command(name='week_chart', description='Generate this week\'s chart for a given symbol and function')
+async def week_chart (
     ctx,
     symbol: str = discord.Option(description="The stock symbol to get data for, e.g. 'AAPL' for Apple")
 ):
@@ -151,6 +200,7 @@ async def weekly_chart (
 
             # Send to discord channel
             print(week_data)
+            await ctx.send(f'Here is the latest week chart for {symbol.upper()}:')
             await ctx.send(file=discord.File(buf, f"{symbol.upper()}_chart.png"))
 
 bot.run(DISCORD_TOKEN)
