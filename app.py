@@ -20,9 +20,17 @@ bot = discord.Bot()
 async def on_ready():
     print(f'We have logged in as {bot.user}')
 
-@bot.slash_command() 
-async def hello(ctx):
-    await ctx.respond('Hello! I am a simple bot!')
+@bot.slash_command(name="help", description="Learn more about reo-bot and its commands") 
+async def help(ctx):
+    embed = discord.Embed(title="Help", description="`reo-bot` is a Discord bot that provides real-time financial charts and ticker data for stocks and assets.", color=discord.Colour.blurple())
+    embed.add_field(name="`/help`", value="View all commands", inline=False)
+    embed.add_field(name="`/crypto_price`", value="Get the current price of a cryptocurrency.", inline=False)
+    embed.add_field(name="`/stock_price`", value="Get the current price of a stock.", inline=False)
+    embed.add_field(name="`/day_chart`", value="Generate the latest intraday chart for a given symbol.", inline=False)
+    embed.add_field(name="`/week_chart`", value="Generate this week's chart for a given symbol.", inline=False)
+    embed.add_field(name="`/month_chart`", value="Generate the latest month chart for a given symbol.", inline=False)
+    embed.add_field(name="`/year_chart`", value="Generate the latest year chart for a given symbol.", inline=False)
+    await ctx.respond(embed=embed)
 
 # Command for getting the current price of a cryptocurrency
 @bot.slash_command(name='crypto_price', description='Get the current price of a cryptocurrency')
@@ -56,7 +64,8 @@ async def crypto_price (
                 await ctx.respond('No data available for the given symbol.')
                 return
 
-            await ctx.respond(f'The current price of {symbol.upper()} is ${"{:.2f}".format(round(float(price),2))}.')
+            embed = discord.Embed(title=f'Current Price of {symbol.upper()}', description=f'The current price of {symbol.upper()} is ${"{:.2f}".format(round(float(price),2))}', color=discord.Colour.blurple())
+            await ctx.respond(embed=embed)
 
 # Command for getting the current price of a stock
 @bot.slash_command(name='stock_price', description='Get the current price of a stock')
@@ -89,7 +98,8 @@ async def stock_price (
                 await ctx.respond('No data available for the given symbol.')
                 return
 
-            await ctx.respond(f'The current price of {symbol.upper()} is ${"{:.2f}".format(round(float(price),2))}.')
+            embed = discord.Embed(title=f'Current Price of {symbol.upper()}', description=f'The current price of {symbol.upper()} is ${"{:.2f}".format(round(float(price),2))}', color=discord.Colour.blurple())
+            await ctx.respond(embed=embed)
 
 # Command for generating daily chart data
 @bot.slash_command(name='day_chart', description='Generate the latest intraday chart for a given symbol and function')
@@ -139,8 +149,9 @@ async def day_chart (
 
             # Send to discord channel
             print(time_series)
-            await ctx.send(f'Here is the latest day chart for {symbol.upper()}:')
-            await ctx.send(file=discord.File(buf, f"{symbol.upper()}_chart.png"))
+            embed = discord.Embed(title=f'Latest Day Chart for {symbol.upper()}', description=f'Here is the latest day chart for {symbol.upper()}:', color=discord.Colour.blurple())
+            embed.set_image(url=f"attachment://{symbol.upper()}_chart.png")
+            await ctx.send(embed=embed, file=discord.File(buf, f"{symbol.upper()}_chart.png"))
 
 
 # Command for generating weekly chart data
@@ -203,10 +214,10 @@ async def week_chart (
 
             # Send to discord channel
             print(week_data)
-            await ctx.send(f'Here is the latest week chart for {symbol.upper()}:')
-            await ctx.send(file=discord.File(buf, f"{symbol.upper()}_chart.png"))
-
-bot.run(DISCORD_TOKEN)
+            embed = discord.Embed(title=f'Latest Week Chart for {symbol.upper()}', description=f'Here is the latest week chart for {symbol.upper()}:', color=discord.Colour.blurple())
+            embed.set_image(url=f"attachment://{symbol.upper()}_chart.png")
+            await ctx.send(embed=embed, file=discord.File(buf, f"{symbol.upper()}_chart.png"))
+            
 
 # Command for generating month chart data
 @bot.slash_command(name='month_chart', description='Generate the latest month chart for a given symbol and function')
@@ -268,7 +279,9 @@ async def month_chart (
 
             # Send to discord channel
             print(month_data)
-            await ctx.send(f'Here is the latest month chart for {symbol.upper()}:')
+            embed = discord.Embed(title=f'Latest Month Chart for {symbol.upper()}', description=f'Here is the latest month chart for {symbol.upper()}:', color=discord.Colour.blurple())
+            embed.set_image(url=f"attachment://{symbol.upper()}_chart.png")
+            await ctx.send(embed=embed, file=discord.File(buf, f"{symbol.upper()}_chart.png"))
 
 # Command for generating year chart data
 @bot.slash_command(name='year_chart', description='Generate the latest year chart for a given symbol and function')
@@ -332,5 +345,8 @@ async def year_chart (
 
             # Send to discord channel
             print(year_data)
-            await ctx.send(f'Here is the latest year chart for {symbol.upper()}:')
-            await ctx.send(file=discord.File(buf, f"{symbol.upper()}_chart.png"))
+            embed = discord.Embed(title=f'Latest Year Chart for {symbol.upper()}', description=f'Here is the latest year chart for {symbol.upper()}:', color=discord.Colour.blurple())
+            embed.set_image(url=f"attachment://{symbol.upper()}_chart.png")
+            await ctx.send(embed=embed, file=discord.File(buf, f"{symbol.upper()}_chart.png"))
+
+bot.run(DISCORD_TOKEN)
