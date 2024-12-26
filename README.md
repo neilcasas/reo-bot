@@ -1,6 +1,6 @@
 # reo-bot
-reo-bot is a Discord bot that assists in your financial ventures by providing real-time financial charts and ticker data for stocks and assets.<br><br>
-[Register this bot to your server](https://discord.com/oauth2/authorize?client_id=1302684404153454644)
+reo-bot is a Discord bot that assists in your financial ventures by providing real-time financial charts and ticker data for stocks and assets.
+
 ## Features
 
 - Get the current price of a cryptocurrency
@@ -21,7 +21,7 @@ reo-bot is a Discord bot that assists in your financial ventures by providing re
 
 ## Prerequisites
 
-- Python 3.12 or higher
+- Python 3.6 or higher
 - A Discord bot token
 - An Alpha Vantage API key
 
