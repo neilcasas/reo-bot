@@ -64,7 +64,10 @@ async def crypto_price (
                 await ctx.respond('No data available for the given symbol.')
                 return
 
-            embed = discord.Embed(title=f'Current Price of {symbol.upper()}', description=f'The current price of {symbol.upper()} is ${"{:.2f}".format(round(float(price),2))}', color=discord.Colour.blurple())
+            embed = discord.Embed(title=f'Current Price of {symbol.upper()}', description=f'The current price of {symbol.upper()} is ${"{:.2f}".format(round(float(price),2))}.', color=discord.Colour.blurple())
+            embed.add_field(name='Learn More', value=f'[View more information about {symbol.upper()}](https://www.tradingview.com/symbols/{symbol.upper()}USD)', inline=False)
+            embed.set_footer(text='Data provided by Alpha Vantage')
+
             await ctx.respond(embed=embed)
 
 # Command for getting the current price of a stock
@@ -98,7 +101,10 @@ async def stock_price (
                 await ctx.respond('No data available for the given symbol.')
                 return
 
-            embed = discord.Embed(title=f'Current Price of {symbol.upper()}', description=f'The current price of {symbol.upper()} is ${"{:.2f}".format(round(float(price),2))}', color=discord.Colour.blurple())
+            embed = discord.Embed(title=f'Current Price of {symbol.upper()}', description=f'The current price of {symbol.upper()} is ${"{:.2f}".format(round(float(price),2))}.', color=discord.Colour.blurple())
+            embed.add_field(name='Learn More', value=f'[View more information about {symbol.upper()}](https://www.tradingview.com/symbols/{symbol.upper()})', inline=False)
+            embed.set_footer(text='Data provided by Alpha Vantage')
+
             await ctx.respond(embed=embed)
 
 # Command for generating daily chart data
@@ -150,7 +156,9 @@ async def day_chart (
             # Send to discord channel
             print(time_series)
             embed = discord.Embed(title=f'Latest Day Chart for {symbol.upper()}', description=f'Here is the latest day chart for {symbol.upper()}:', color=discord.Colour.blurple())
+            embed.add_field(name='Learn More', value=f'[View more information about {symbol.upper()}](https://www.tradingview.com/symbols/{symbol.upper()})', inline=False)
             embed.set_image(url=f"attachment://{symbol.upper()}_chart.png")
+            embed.set_footer(text='Data provided by Alpha Vantage')
             await ctx.send(embed=embed, file=discord.File(buf, f"{symbol.upper()}_chart.png"))
 
 
@@ -215,7 +223,9 @@ async def week_chart (
             # Send to discord channel
             print(week_data)
             embed = discord.Embed(title=f'Latest Week Chart for {symbol.upper()}', description=f'Here is the latest week chart for {symbol.upper()}:', color=discord.Colour.blurple())
+            embed.add_field(name='Learn More', value=f'[View more information about {symbol.upper()}](https://www.tradingview.com/symbols/{symbol.upper()})', inline=False)
             embed.set_image(url=f"attachment://{symbol.upper()}_chart.png")
+            embed.set_footer(text='Data provided by Alpha Vantage')
             await ctx.send(embed=embed, file=discord.File(buf, f"{symbol.upper()}_chart.png"))
             
 
@@ -280,7 +290,9 @@ async def month_chart (
             # Send to discord channel
             print(month_data)
             embed = discord.Embed(title=f'Latest Month Chart for {symbol.upper()}', description=f'Here is the latest month chart for {symbol.upper()}:', color=discord.Colour.blurple())
+            embed.add_field(name='Learn More', value=f'[View more information about {symbol.upper()}](https://www.tradingview.com/symbols/{symbol.upper()})', inline=False)
             embed.set_image(url=f"attachment://{symbol.upper()}_chart.png")
+            embed.set_footer(text='Data provided by Alpha Vantage')
             await ctx.send(embed=embed, file=discord.File(buf, f"{symbol.upper()}_chart.png"))
 
 # Command for generating year chart data
@@ -346,7 +358,9 @@ async def year_chart (
             # Send to discord channel
             print(year_data)
             embed = discord.Embed(title=f'Latest Year Chart for {symbol.upper()}', description=f'Here is the latest year chart for {symbol.upper()}:', color=discord.Colour.blurple())
+            embed.add_field(name='Learn More', value=f'[View more information about {symbol.upper()}](https://www.tradingview.com/symbols/{symbol.upper()})', inline=False)
             embed.set_image(url=f"attachment://{symbol.upper()}_chart.png")
+            embed.set_footer(text='Data provided by Alpha Vantage')
             await ctx.send(embed=embed, file=discord.File(buf, f"{symbol.upper()}_chart.png"))
 
 bot.run(DISCORD_TOKEN)
