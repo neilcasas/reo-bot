@@ -5,6 +5,4 @@
 # Todo
 
 - Watchlist
-- Candlestick charts
 - Help message
-- Other economic info (unemployment, gdp etc.)
